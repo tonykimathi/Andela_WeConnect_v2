@@ -82,6 +82,9 @@ def login():
     if email is None:
         return jsonify({"message": "Please input an email address"}), 401
 
+    if password is None:
+        return jsonify({"message": "Please input your password"}), 401
+
     user = User.query.filter_by(email=email).first()
 
     if not user:
@@ -96,5 +99,5 @@ def login():
 
     return jsonify({'message': 'Wrong password entered'}), 401
 
-#@users_blueprint.route('/api/v2/auth/login', methods=['POST'])
-#def logout():
+# @users_blueprint.route('/api/v2/auth/logout', methods=['POST'])
+# def logout():

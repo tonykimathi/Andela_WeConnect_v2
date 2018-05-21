@@ -123,6 +123,25 @@ class UsersTestCase(unittest.TestCase):
         response_message = json.loads(response.data)['message']
         self.assertEqual(response_message, 'Please input an email address')
 
+    def test_no_password_login(self):
+        create_user = {"email": "timgee@email.com",
+                       "username": "TimGi",
+                       "password": "tim12345"
+                       }
+
+        self.client.post("/api/v2/auth/register",
+                         data=json.dumps(create_user),
+                         content_type="application/json")
+        no_password_login = {"email": 'timgee@email.com',
+                             "password": None
+                            }
+        response = self.client.post("/api/v2/auth/login",
+                                    data=json.dumps(no_password_login),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+        response_message = json.loads(response.data)['message']
+        self.assertEqual(response_message, 'Please input your password')
+
     def test_wrong_password_login(self):
         create_user = {"email": "timgee@email.com",
                        "username": "TimGi",
