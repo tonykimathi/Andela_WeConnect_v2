@@ -47,20 +47,17 @@ def signup():
     username = data.get('username')
     password = data.get('password')
 
-    valid_email = re.match("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email.strip())
     hashed_password = generate_password_hash(data['password'], method='sha256')
 
-    if valid_email is False:
-        return jsonify({'message': 'Please enter valid Email!'}), 400
-
     if email is None:
-        return jsonify({'message': 'Please input an email address'})
-
-    if password is None:
-        return jsonify({'message': 'Please input a password'})
-
+        return jsonify({"message": "Please input an email address"}), 400
     if username is None:
-        return jsonify({'message': 'Please input a username'})
+        return jsonify({"message": "Please input a username."}), 400
+    if password is None:
+        return jsonify({"message": "Please input a password."}), 400
+
+    if not re.match(r"(^[a-zA-Z0-9_.]+@[a-zA-Z0-9-]+\.[a-z]+$)", email):
+        return jsonify({"message": "Please provide a valid email address"}), 401
 
     person = User.query.filter_by(email=email).first()
 
@@ -75,4 +72,26 @@ def signup():
     return jsonify({'message': 'New User Created'}), 201
 
 
+@users_blueprint.route('/api/v2/auth/login', methods=['POST'])
+def login():
 
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'No user found'}), 401
+
+    if check_password_hash(user.password, password):
+        token = jwt.encode({'user_id': user.user_id,
+                            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                           SECRET_KEY)
+
+        return jsonify({'token': token.decode('UTF-8'), 'message': 'User login successful'}), 200
+
+    return jsonify({'message': 'Wrong password entered'}), 401
+
+#@users_blueprint.route('/api/v2/auth/login', methods=['POST'])
+#def logout():
