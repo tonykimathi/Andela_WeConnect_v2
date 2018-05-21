@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify, Blueprint, make_response
+from flask import request, jsonify, Blueprint
 import jwt
 from app.models import User
 import uuid
@@ -78,6 +78,9 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
+
+    if email is None:
+        return jsonify({"message": "Please input an email address"}), 401
 
     user = User.query.filter_by(email=email).first()
 
