@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request, jsonify, Blueprint
 # import jwt
 from app.models import User, BlacklistToken
-import uuid
+# import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 # import datetime
@@ -125,3 +125,32 @@ def logout():
             return jsonify({'message': resp}), 401
     else:
         return jsonify({'message': 'Provide a valid auth token.'}), 403
+
+
+@users_blueprint.route('/api/v2/auth/reset-password', methods=['PUT'])
+@token_required
+def reset_password():
+    data = request.get_json()
+    email = data.get('email')
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not old_password:
+        return jsonify({'msg': 'Please enter your old password.'}), 401
+
+    if re.match("^[a-zA-Z0-9_]*$", new_password):
+        return jsonify({"msg": "Your password should have at least 1 capital letter, special character and number."}), \
+               401
+
+    user = User.query.filter_by(email=email).first()
+
+    if user.password:
+        if confirm_password == new_password:
+            user.password = generate_password_hash(new_password, method='sha256')
+            db.session.add(user)
+            db.session.commit()
+
+            return jsonify({'message': 'Password successfully reset.'}), 200
+        return jsonify({'message': 'Passwords do not match.', 'password': user.password}), 401
+    return jsonify({'message': 'User not found.'}), 400

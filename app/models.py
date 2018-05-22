@@ -37,7 +37,7 @@ class User(db.Model):
 
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=30),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
@@ -60,7 +60,7 @@ class User(db.Model):
         SECRET_KEY = 'BetterKeepThisSecret'
 
         try:
-            payload = jwt.decode(auth_token, SECRET_KEY)
+            payload = jwt.decode(auth_token, SECRET_KEY,  leeway=10)
             is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
 
             if is_blacklisted_token:

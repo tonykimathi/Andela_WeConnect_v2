@@ -228,7 +228,7 @@ class UsersTestCase(unittest.TestCase):
         login_response = self.client.post("/api/v2/auth/login",
                                           data=json.dumps(create_user),
                                           content_type="application/json")
-        time.sleep(6)
+        time.sleep(46)
         response = self.client.post("/api/v2/auth/logout",
                                     content_type="application/json",
                                     headers=dict(
@@ -271,7 +271,35 @@ class UsersTestCase(unittest.TestCase):
             self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
             self.assertEqual(response.status_code, 401)
 
-    # def test_reset_password(self):
+    def test_reset_password(self):
+        with self.client:
+            create_user = {"email": "timgee@email.com",
+                           "username": "TimGi",
+                           "password": "Tim12345."
+                           }
+
+            self.client.post("/api/v2/auth/register",
+                             data=json.dumps(create_user),
+                             content_type="application/json")
+            login_response = self.client.post("/api/v2/auth/login",
+                                              data=json.dumps(create_user),
+                                              content_type="application/json")
+            password_reset = {"email": "timgee@email.com",
+                              "old_password": "Tim12345.",
+                              "new_password": "Tim123456-.",
+                              "confirm_password": "Tim123456-."
+                              }
+            reset_response = self.client.put("/api/v2/auth/reset-password",
+                                             data=json.dumps(password_reset),
+                                             content_type="application/json",
+                                             headers=dict(
+                                                 Authorization='Bearer ' + json.loads(
+                                                     login_response.data.decode()
+                                                 )['auth_token']
+                                             ))
+            data = json.loads(reset_response.data.decode())
+            self.assertEqual(data['message'], 'Password successfully reset.')
+            self.assertEqual(reset_response.status_code, 200)
 
     def tearDown(self):
         """teardown all initialized variables."""
