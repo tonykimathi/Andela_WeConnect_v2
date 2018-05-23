@@ -82,3 +82,23 @@ def update_business(business_id):
         except KeyError:
             return jsonify({"message": "There was an error updating your business, please try again."}), 404
         return jsonify({'message': 'Business updated successfully', 'business_data': biz_data}), 200
+
+
+@businesses_blueprint.route('/api/v2/auth/businesses', methods=['GET'])
+@token_required
+def view_all_business():
+    all_businesses = Business.query.all()
+    result = []
+
+    for biz in all_businesses:
+        biz_data = {
+            'business_id': biz.business_id,
+            'business_name': biz.business_name,
+            'description': biz.description,
+            'category': biz.category,
+            'location': biz.location
+        }
+        result.append(biz_data)
+    return jsonify({'all_businesses': result}), 200
+
+
