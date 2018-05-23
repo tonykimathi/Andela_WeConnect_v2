@@ -39,13 +39,58 @@ class BusinessTestCase(unittest.TestCase):
                                              data=json.dumps(create_business),
                                              content_type="application/json",
                                              headers=dict(
-                                                Authorization='Bearer ' + json.loads(
-                                                    login_response.data.decode()
-                                                )['auth_token']
+                                                 Authorization='Bearer ' + json.loads(
+                                                     login_response.data.decode()
+                                                 )['auth_token']
                                              ))
         data = json.loads(business_response.data.decode())
         self.assertEqual(data['message'], "Business created successfully")
         self.assertEqual(business_response.status_code, 201)
+
+    def test_successful_business_update(self):
+        create_user = {"email": "tomgeeF@email.com",
+                       "username": "TomGiF",
+                       "password": "tim12345"
+                       }
+
+        self.client.post("/api/v2/auth/register",
+                         data=json.dumps(create_user),
+                         content_type="application/json")
+
+        login_response = self.client.post("/api/v2/auth/login",
+                                          data=json.dumps(create_user),
+                                          content_type="application/json")
+
+        create_business = {"business_name": "St. Pius The Tenth",
+                           "description": "This is a school founded in 2015",
+                           "category": "School",
+                           "location": "Meru"
+                           }
+
+        self.client.post("/api/v2/auth/businesses",
+                         data=json.dumps(create_business),
+                         content_type="application/json",
+                         headers=dict(
+                             Authorization='Bearer ' + json.loads(
+                                 login_response.data.decode()
+                             )['auth_token']
+                         ))
+        update_business = {"business_name": "St. Pius The Tenth Academy",
+                           "description": "This is a school founded in 2017",
+                           "category": "School",
+                           "location": "Meru"
+                           }
+        update_response = self.client.put("/api/v2/auth/businesses/1/",
+                                          data=json.dumps(update_business),
+                                          content_type="application/json",
+                                          headers=dict(
+                                              Authorization='Bearer ' + json.loads(
+                                                  login_response.data.decode()
+                                              )['auth_token']
+                                          ))
+        data = json.loads(update_response.data.decode())
+        self.assertEqual(data['message'], "Business updated successfully")
+        self.assertEqual(update_response.status_code, 200)
 
     def tearDown(self):
         """teardown all initialized variables."""

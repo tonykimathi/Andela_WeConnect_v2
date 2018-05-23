@@ -45,7 +45,40 @@ def create_business():
         return jsonify({"message": "There is a missing field. Please check your inputs."}), 404
     return jsonify({'message': 'Business created successfully', 'business_data': biz_data}), 201
 
-# @businesses_blueprint.route('/api/v2/auth/businesses', methods=['PUT'])
-# @token_required
-# def update_business():
 
+@businesses_blueprint.route('/api/v2/auth/businesses/<business_id>/', methods=['PUT'])
+@token_required
+def update_business(business_id):
+    current_business = Business.query.filter_by(business_id=business_id).first()
+    if current_business:
+        data = request.get_json()
+        business_name = data.get('business_name')
+        description = data.get('description')
+        location = data.get('location')
+        category = data.get('category')
+
+        try:
+            new_business = Business.query.filter_by(business_name=business_name).first()
+
+            if new_business:
+                return jsonify({'message': 'Business name already exists, enter a new one.'}), 202
+
+            current_business.business_name = business_name
+            current_business.description = description
+            current_business.location = location
+            current_business.category = category
+
+            db.session.add(current_business)
+            db.session.commit()
+
+            biz_data = {
+                'business_id': current_business.business_id,
+                'business_name': current_business.business_name,
+                'description': current_business.description,
+                'category': current_business.category,
+                'location': current_business.location
+            }
+
+        except KeyError:
+            return jsonify({"message": "There was an error updating your business, please try again."}), 404
+        return jsonify({'message': 'Business updated successfully', 'business_data': biz_data}), 200
