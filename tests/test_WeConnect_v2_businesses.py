@@ -80,7 +80,7 @@ class BusinessTestCase(unittest.TestCase):
                            "category": "School",
                            "location": "Meru"
                            }
-        update_response = self.client.put("/api/v2/auth/businesses/1/",
+        update_response = self.client.put("/api/v2/auth/businesses/1",
                                           data=json.dumps(update_business),
                                           content_type="application/json",
                                           headers=dict(
@@ -136,9 +136,47 @@ class BusinessTestCase(unittest.TestCase):
         business_response = self.client.get("/api/v2/auth/businesses",
                                             content_type="application/json",
                                             headers=dict(
-                                                 Authorization='Bearer ' + json.loads(
-                                                     login_response.data.decode()
-                                                 )['auth_token']
+                                                Authorization='Bearer ' + json.loads(
+                                                    login_response.data.decode()
+                                                )['auth_token']
+                                            ))
+        self.assertEqual(business_response.status_code, 200)
+
+    def test_view_single_business(self):
+        create_user = {"email": "tomgeeF@email.com",
+                       "username": "TomGiF",
+                       "password": "tim12345"
+                       }
+
+        self.client.post("/api/v2/auth/register",
+                         data=json.dumps(create_user),
+                         content_type="application/json")
+
+        login_response = self.client.post("/api/v2/auth/login",
+                                          data=json.dumps(create_user),
+                                          content_type="application/json")
+
+        create_business = {"business_name": "St. Pius The Tenth",
+                           "description": "This is a school founded in 2015",
+                           "category": "School",
+                           "location": "Meru"
+                           }
+
+        self.client.post("/api/v2/auth/businesses",
+                         data=json.dumps(create_business),
+                         content_type="application/json",
+                         headers=dict(
+                             Authorization='Bearer ' + json.loads(
+                                 login_response.data.decode()
+                             )['auth_token']
+                         ))
+
+        business_response = self.client.get("/api/v2/auth/businesses/1",
+                                            content_type="application/json",
+                                            headers=dict(
+                                                Authorization='Bearer ' + json.loads(
+                                                    login_response.data.decode()
+                                                )['auth_token']
                                             ))
         self.assertEqual(business_response.status_code, 200)
 

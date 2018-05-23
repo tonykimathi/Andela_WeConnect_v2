@@ -46,7 +46,7 @@ def create_business():
     return jsonify({'message': 'Business created successfully', 'business_data': biz_data}), 201
 
 
-@businesses_blueprint.route('/api/v2/auth/businesses/<business_id>/', methods=['PUT'])
+@businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['PUT'])
 @token_required
 def update_business(business_id):
     current_business = Business.query.filter_by(business_id=business_id).first()
@@ -102,3 +102,15 @@ def view_all_business():
     return jsonify({'all_businesses': result}), 200
 
 
+@businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['GET'])
+@token_required
+def view_single_business(business_id):
+    business = Business.query.filter_by(business_id=business_id).first()
+    biz_data = {
+        'business_id': business.business_id,
+        'business_name': business.business_name,
+        'description': business.description,
+        'category': business.category,
+        'location': business.location
+    }
+    return jsonify({'single_business': biz_data}), 200
