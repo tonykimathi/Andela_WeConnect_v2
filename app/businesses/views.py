@@ -114,3 +114,12 @@ def view_single_business(business_id):
         'location': business.location
     }
     return jsonify({'single_business': biz_data}), 200
+
+
+@businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['DELETE'])
+@token_required
+def delete_single_business(business_id):
+    business = Business.query.filter_by(business_id=business_id).first()
+    db.session.delete(business)
+    db.session.commit()
+    return jsonify({'message': 'Business successfully deleted'}), 200
