@@ -94,9 +94,8 @@ class Business(db.Model):
     category = db.Column(db.String(60), index=True, unique=True)
     created_on = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, business_id, user_id, business_name, description, location, category):
-        self.business_id = business_id
-        self.user_id = user_id
+    def __init__(self, business_name, description, location, category):
+        # self.user_id = user_id
         self.business_name = business_name
         self.description = description
         self.location = location
