@@ -35,3 +35,16 @@ def create_review(business_id):
     except KeyError:
         return jsonify({"message": "There is a missing field. Please check your inputs."}), 404
     return jsonify({'message': 'Review created successfully', 'business_data': review_data}), 201
+
+
+@reviews_blueprint.route('/api/v2/auth/businesses/<business_id>/reviews', methods=['GET'])
+@token_required
+def get_all_reviews(business_id):
+    business = Business.query.filter_by(business_id=business_id).first()
+    review_data = {
+        'business_id': business.business_id,
+        'review_name': business.review_name,
+        'body': business.body,
+        'user_id': business.user_id
+    }
+    return jsonify({'single_business': review_data}), 200

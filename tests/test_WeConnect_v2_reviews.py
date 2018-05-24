@@ -60,3 +60,5 @@ class BusinessTestCase(unittest.TestCase):
         data = json.loads(review_response.data.decode())
         self.assertEqual(data['message'], "You cannot review a business you own.")
         self.assertEqual(review_response.status_code, 403)
+
+    # def test_get_all_reviews(self):
