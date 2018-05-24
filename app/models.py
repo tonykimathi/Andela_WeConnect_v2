@@ -19,6 +19,8 @@ class User(db.Model):
     password = db.Column(db.String(128))
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
+    businesses = db.relationship('Business', backref='user', lazy='dynamic')
+    reviews = db.relationship('Review', backref='user', lazy='dynamic')
 
     def __init__(self, email, username, password, admin=False):
         # self.user_id = user_id
@@ -87,15 +89,16 @@ class Business(db.Model):
     __tablename__ = 'Businesses'
 
     business_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, index=True, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     business_name = db.Column(db.String(60), index=True, unique=True)
     description = db.Column(db.String(128))
     location = db.Column(db.String(60), index=True, unique=True)
     category = db.Column(db.String(60), index=True, unique=True)
     created_on = db.Column(db.DateTime, nullable=False)
+    reviews = db.relationship('Review', backref='business', lazy='dynamic')
 
-    def __init__(self, business_name, description, location, category):
-        # self.user_id = user_id
+    def __init__(self, user_id, business_name, description, location, category):
+        self.user_id = user_id
         self.business_name = business_name
         self.description = description
         self.location = location
@@ -115,13 +118,14 @@ class Review(db.Model):
     __tablename__ = 'Reviews'
 
     review_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    business_id = db.Column(db.Integer, index=True, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    business_id = db.Column(db.Integer, db.ForeignKey('Businesses.business_id'))
     review_name = db.Column(db.String(60), index=True, unique=True)
     body = db.Column(db.String(128))
 
-    def __init__(self, review_id, business_id, review_name, body):
-        self.review_id = review_id
-        self.business_id = business_id
+    def __init__(self, user_id, review_name, body):
+        self.user_id = user_id
+        # self.business_id = business_id
         self.review_name = review_name
         self.body = body
 

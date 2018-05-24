@@ -32,7 +32,8 @@ class BusinessTestCase(unittest.TestCase):
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru"
+                           "location": "Meru",
+                           "user_id": 1
                            }
 
         business_response = self.client.post("/api/v2/auth/businesses",
@@ -64,7 +65,8 @@ class BusinessTestCase(unittest.TestCase):
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru"
+                           "location": "Meru",
+                           "user_id": 1
                            }
 
         self.client.post("/api/v2/auth/businesses",
@@ -109,12 +111,14 @@ class BusinessTestCase(unittest.TestCase):
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru"
+                           "location": "Meru",
+                           "user_id": 1
                            }
         create_business2 = {"business_name": "Mimosa Clinics",
                             "description": "This is a clinic founded in 2017",
                             "category": "Clinic",
-                            "location": "Nairobi"
+                            "location": "Nairobi",
+                            "user_id": 1
                             }
         self.client.post("/api/v2/auth/businesses",
                          data=json.dumps(create_business),
@@ -159,7 +163,8 @@ class BusinessTestCase(unittest.TestCase):
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru"
+                           "location": "Meru",
+                           "user_id": 1
                            }
 
         self.client.post("/api/v2/auth/businesses",
@@ -197,7 +202,8 @@ class BusinessTestCase(unittest.TestCase):
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru"
+                           "location": "Meru",
+                           "user_id": 1
                            }
 
         self.client.post("/api/v2/auth/businesses",

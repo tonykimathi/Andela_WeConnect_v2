@@ -14,6 +14,7 @@ def create_business():
     description = data.get('description')
     location = data.get('location')
     category = data.get('category')
+    user_id = data.get('user_id')
 
     if business_name is None:
         return jsonify({"message": "Please input a business name."}), 400
@@ -30,7 +31,7 @@ def create_business():
         return jsonify({'message': 'The business name you entered has been taken.'}), 202
     try:
         created_business = Business(business_name=business_name, description=description,
-                                    location=location, category=category)
+                                    location=location, category=category, user_id=user_id)
         db.session.add(created_business)
         db.session.commit()
         biz_data = {
@@ -38,7 +39,8 @@ def create_business():
             'business_name': created_business.business_name,
             'description': created_business.description,
             'category': created_business.category,
-            'location': created_business.location
+            'location': created_business.location,
+            'user_id': created_business.user_id
         }
 
     except KeyError:
