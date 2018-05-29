@@ -114,12 +114,13 @@ class BusinessTestCase(unittest.TestCase):
                            "location": "Meru",
                            "user_id": 1
                            }
-        create_business2 = {"business_name": "Mimosa Clinics",
-                            "description": "This is a clinic founded in 2017",
-                            "category": "Clinic",
-                            "location": "Nairobi",
+        create_business2 = {"business_name": "St. Pius The Tenth",
+                            "description": "This is a school founded in 2015",
+                            "category": "School",
+                            "location": "Meru",
                             "user_id": 1
                             }
+
         self.client.post("/api/v2/auth/businesses",
                          data=json.dumps(create_business),
                          content_type="application/json",

@@ -1,4 +1,5 @@
 import unittest
+import time
 import json
 from app import create_app
 from app.models import db, User, BlacklistToken
@@ -75,7 +76,6 @@ class UsersTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         response_message = json.loads(response.data.decode())
         self.assertEqual(response_message['message'], 'New User Created')
-        self.assertTrue(response_message['auth_token'])
 
     def test_wrong_email_registration(self):
         create_user = {"email": "timgee-emai-com",
@@ -209,9 +209,9 @@ class UsersTestCase(unittest.TestCase):
                                     headers=dict(
                                         Authorization="Bearer " + json.loads(login_response.data.decode())['auth_token']
                                     ))
-        print(json.loads(login_response.data.decode())['auth_token'])
+        # print(json.loads(login_response.data.decode())['auth_token'])
         response_message = json.loads(response.data.decode())
-        print(response_message)
+        # print(response_message)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_message['message'], 'Successfully logged out.')
 
@@ -227,20 +227,21 @@ class UsersTestCase(unittest.TestCase):
     #     login_response = self.client.post("/api/v2/auth/login",
     #                                       data=json.dumps(create_user),
     #                                       content_type="application/json")
-    #     time.sleep(46)
+    #     time.sleep(21)
     #     response = self.client.post("/api/v2/auth/logout",
     #                                 content_type="application/json",
     #                                 headers=dict(
     #                                     Authorization="Bearer " +
-    # json.loads(login_response.data.decode())['auth_token']
+    #                                                   json.loads(login_response.data.decode())['auth_token']
     #                                 ))
     #     print(json.loads(login_response.data.decode("utf-8"))['auth_token'])
     #     self.assertEqual(response.status_code, 401)
     #     response_message = json.loads(response.data.decode("utf-8"))
-    #     self.assertEqual(response_message['message'], 'Signature expired. Please log in again.')
+    #     self.assertEqual(response_message['message'], 'Invalid Token!')
 
     def test_valid_blacklisted_token_logout(self):
-        """ Test for logout after a valid token gets blacklisted """
+        """ Test for logout after a valid token gets blacklisted  """
+
         with self.client:
             create_user = {"email": "timgee@email.com",
                            "username": "TimGi",
@@ -259,16 +260,18 @@ class UsersTestCase(unittest.TestCase):
             db.session.add(blacklist_token)
             db.session.commit()
             # blacklisted valid token logout
+            print(json.loads(login_response.data.decode()))
+            print(blacklist_token)
+
             response = self.client.post(
-                '/api/v2/auth/logout',
+                '/api/v2/auth/businesses',
                 headers=dict(
                     Authorization='Bearer ' + json.loads(
                         login_response.data.decode()
                     )['auth_token']
-                )
-            )
+                ))
             data = json.loads(response.data.decode())
-            self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
+            self.assertEqual(data['message'], 'Invalid Token!')
             self.assertEqual(response.status_code, 401)
 
     def test_reset_password(self):

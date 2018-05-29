@@ -22,20 +22,29 @@ def token_required(f):
             if not token:
                 return jsonify({'message': 'Token is missing!'}), 401
 
-            return f(*args, **kwargs)
+            try:
+                data = User.decode_auth_token(token)
+                print(data)
+                if isinstance(data, int):
+                    current_user = User.query.filter_by(id=data).first()
+                else:
+                    return jsonify({'message': 'Invalid Token!'}), 401
 
-        return jsonify({'message': 'Token is invalid!'}), 401
+            except KeyError:
+                return jsonify({'message': 'Token is invalid!'}), 401
+
+            return f(current_user, *args, **kwargs)
 
     return decorated
 
 
-@users_blueprint.route('/')
+@users_blueprint.route('/', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def index():
     response = jsonify({'greetings': 'Greetings and welcome to weConnect API'})
     return response, 200
 
 
-@users_blueprint.route('/api/v2/auth/register', methods=['POST'])
+@users_blueprint.route('/api/v2/auth/register', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def signup():
     data = request.get_json()
     email = data.get('email')
@@ -61,13 +70,15 @@ def signup():
 
     created_user = User(email=data['email'], username=data['username'], password=hashed_password)
 
+    user_data = {
+        'email': created_user.email,
+        'username': created_user.username
+    }
+
     db.session.add(created_user)
     db.session.commit()
 
-    auth_token = created_user.encode_auth_token(created_user.id)
-
-    return jsonify({'message': 'New User Created',
-                    'auth_token': auth_token.decode()}), 201
+    return jsonify({'message': 'New User Created', 'user_data': user_data}), 201
 
 
 @users_blueprint.route('/api/v2/auth/login', methods=['POST'])
@@ -98,8 +109,10 @@ def login():
 
 @users_blueprint.route('/api/v2/auth/logout', methods=['POST'])
 @token_required
-def logout():
+def logout(current_user):
     """Logs out the user and adds token to blacklist"""
+    if not current_user:
+        return jsonify({'message': 'You cannot perform this function'})
 
     auth_header = request.headers.get('Authorization')
 
@@ -129,7 +142,10 @@ def logout():
 
 @users_blueprint.route('/api/v2/auth/reset-password', methods=['PUT'])
 @token_required
-def reset_password():
+def reset_password(current_user):
+    if not current_user:
+        return jsonify({'message': 'You cannot perform that function'})
+
     data = request.get_json()
     email = data.get('email')
     old_password = data.get('old_password')

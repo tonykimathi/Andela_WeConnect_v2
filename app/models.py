@@ -39,7 +39,7 @@ class User(db.Model):
 
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=30),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
@@ -92,8 +92,8 @@ class Business(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     business_name = db.Column(db.String(60), index=True, unique=True)
     description = db.Column(db.String(128))
-    location = db.Column(db.String(60), index=True, unique=True)
-    category = db.Column(db.String(60), index=True, unique=True)
+    location = db.Column(db.String(60), index=True)
+    category = db.Column(db.String(60), index=True)
     created_on = db.Column(db.DateTime, nullable=False)
     reviews = db.relationship('Review', backref='business', lazy='dynamic')
 
