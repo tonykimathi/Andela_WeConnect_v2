@@ -120,7 +120,7 @@ class Review(db.Model):
     review_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     business_id = db.Column(db.Integer, db.ForeignKey('Businesses.business_id'))
-    review_name = db.Column(db.String(60), index=True, unique=True)
+    review_name = db.Column(db.String(60), index=True)
     body = db.Column(db.String(128))
 
     def __init__(self, user_id, review_name, body):

@@ -106,7 +106,7 @@ def view_all_business(current_user):
     search = request.args.get('q')
     category = request.args.get('category')
     location = request.args.get('location')
-    all_businesses = Business.query  # .paginate(page, limit, False)
+    all_businesses = Business.query
 
     if search is not None and search.strip() != '':
         all_businesses = all_businesses.filter(func.lower(
