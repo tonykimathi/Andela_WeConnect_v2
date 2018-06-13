@@ -5,20 +5,21 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
 
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://timothy:timmutai@localhost:5432/andela_weconnect'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://timothy:timmutai@localhost:5432/andela_weconnect'
 
 
 class TestingConfig(BaseConfig):
     DEBUG = False
     TESTING = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://timothy:timmutai@localhost:5432/test_db'
+    TEST_DATABASE_URI = os.getenv("TEST_DATABASE_URI")
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://timothy:timmutai@localhost:5432/test_db'
 
 
 class StagingConfig(BaseConfig):

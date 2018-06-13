@@ -8,8 +8,6 @@ services:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
-before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
 # command to run tests
 script:
   - nosetests --with-coverage --cover-package=app
