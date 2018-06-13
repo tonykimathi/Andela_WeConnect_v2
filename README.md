@@ -90,10 +90,10 @@ The server will run on http://127.0.0.1:5000/
 ## Testing API on Postman
 
 *Note* Ensure that after you succesfully login a user, you use the generated token for the endpoints that require authentication. 
-```
 
 ### API endpoints
 
+```
 | Endpoint | Method |  Functionality | Authentication |
 | --- | --- | --- | --- |
 | /api/v2/register | POST | Creates a user account | FALSE
@@ -111,6 +111,7 @@ The server will run on http://127.0.0.1:5000/
 | /api/v2/businesses/{businessid}/reviews | GET | Get all reviews to a business | OPTIONAL
 | /api/v2/search | GET | Search and filter businesses | OPTIONAL
 
+```
 ## Pagination
 
 The API enables pagination by passing in *page* and *limit* as arguments in the request url as shown in the following example:
