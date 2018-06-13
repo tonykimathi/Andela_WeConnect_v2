@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/tonykimathi/Andela_WeConnect_v2.svg?branch=ft-get-all-user-reviews-157660976)](https://travis-ci.org/tonykimathi/Andela_WeConnect_v2)
+[![Coverage Status](https://coveralls.io/repos/github/tonykimathi/Andela_WeConnect_v2/badge.svg?branch=ft-get-all-user-reviews-157660976)](https://coveralls.io/github/tonykimathi/Andela_WeConnect_v2?branch=ft-get-all-user-reviews-157660976)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/51c2106d3a9842aabe2c996e22537d6a)](https://www.codacy.com/app/tonykimathi/Andela_WeConnect_v2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonykimathi/Andela_WeConnect_v2&amp;utm_campaign=Badge_Grade)
+
 # WeConnect
 
 This is an API for WeConnect, a platform that brings businesses and individuals together. This platform creates awareness for businesses and gives the users the ability to:
