@@ -27,10 +27,13 @@ This is an API for WeConnect, a platform that brings businesses and individuals 
 
 Clone the repo.
 ```
-https://github.com/tonykimathi/Andela_WeConnect_v2```
-and cd into the folder:
+git clone https://github.com/tonykimathi/Andela_WeConnect_v2
 ```
-$ /WeConnect-API
+
+and navigate into the folder: 
+
+```
+$ cd /Andela_WeConnect_v2
 ```
 
 ## Virtual environment
@@ -49,6 +52,7 @@ $ source venv/bin/activate
 Install package requirements to your environment.
 ```
 pip install -r requirements.txt
+```
 
 ## Database migration
 
