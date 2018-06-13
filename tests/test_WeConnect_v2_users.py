@@ -16,26 +16,6 @@ class UsersTestCase(unittest.TestCase):
             db.drop_all()
             db.create_all()
 
-        # user = {"email": "bobbygee@email.com",
-        #                "username": "BobbyGee",
-        #                "password": "Bobby12345"
-        #                }
-        #
-        # self.client.post("/api/v2/auth/register",
-        #                  data=json.dumps(user),
-        #                  content_type="application/json")
-        #
-        # response = self.client.post("/api/v2/auth/login",
-        #                             data=json.dumps(user),
-        #                             content_type="application/json")
-        #
-        # # print(json.loads(response.data.decode()))
-        #
-        # self.token = json.loads(response.data.decode())['token']
-        #
-        # self.headers = {'Content-Type': 'application/json',
-        #                 'token': self.token}
-
     def test_encode_auth_token(self):
         user = User(
             email='test@test.com',

@@ -1,5 +1,6 @@
 import unittest
 from app import create_app
+import os
 
 
 class TestDevelopmentConfig(unittest.TestCase):
@@ -9,7 +10,7 @@ class TestDevelopmentConfig(unittest.TestCase):
         self.assertTrue(app.config['DEBUG'] is True)
         self.assertFalse(app is None)
         self.assertTrue(
-            app.config['SQLALCHEMY_DATABASE_URI'] == 'postgresql://timothy:timmutai@localhost:5432/andela_weconnect'
+            app.config['SQLALCHEMY_DATABASE_URI'] == os.getenv("SQLALCHEMY_DATABASE_URI")
         )
 
 
@@ -19,5 +20,5 @@ class TestTestingConfig(unittest.TestCase):
         app = create_app(config_name='testing')
         self.assertTrue(app.config['DEBUG'] is False)
         self.assertTrue(
-            app.config['SQLALCHEMY_DATABASE_URI'] == 'postgresql://timothy:timmutai@localhost:5432/test_db'
+            app.config['TEST_DATABASE_URI'] == os.getenv("TEST_DATABASE_URI")
         )
