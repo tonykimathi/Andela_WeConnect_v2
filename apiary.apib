@@ -1,80 +1,288 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://we-connect-v2.herokuapp.com/
 
-# WeConnect_v2 API
+# WeConnect API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+WeConnect provides a platform that brings businesses and individuals together. This platform creates awareness for businesses and gives the users the ability to write reviews about the businesses they have interacted with.
 
-## Questions Collection [/questions]
+## Homepage [/]
 
-### List All Questions [GET]
+### View The Homepage [GET]
+
 
 + Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+        {
+            "greetings": "Greetings and welcome to WeConnect API"
+        }
 
-### Create a New Question [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+## Create Account [/api/v2/auth/register]
+
+### Create a New Account [POST]
+You may create your own account using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "username": "timmutai",
+            "email": "timmutai@email.com",
+            "password": "12345.H",
+            "confirm_password": "12345.H"
         }
 
 + Response 201 (application/json)
 
-    + Headers
+    + Body
 
-            Location: /questions/2
+            {
+                "msg": "User created successfully.",
+                "user_data": {
+                "email": "timmutai@email.com",
+                "password": "12345.H",
+                "user_id": 1,
+                "username": "timmutai"
+            }
+
+## Log in to Account [/api/v2/auth/login]
+
+### Login [POST]
+You may login to your own account using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        {
+            "email": "timmutai@email.com",
+            "password": "12345.H",
+        }
+
++ Response 200 (application/json)
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
+                "msg": "Successfully logged in!",
+                "user_data": {
+                    "email": "timmutai@email.com",
+                    "password": "12345.H",
+                    "user_id": 1,
+                    "username": "timmutai"
+            }
+
+
+## Reset Password [/api/v2/auth/reset-password]
+
+### Password [POST]
+You may reset your own password using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        {
+            "email": "timmutai@email.com",
+            "new_password": "1234566.H",
+            "confirm_new_password": "1234566.H",
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "msg": "Your password has been reset",
+            }
+
+
+## Log out of account [/api/v2/auth/logout]
+
+### Logout [POST]
+You may log out of your own account using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "msg": "Logout successful",
+            }
+
+
+## Create and view Businesses [/api/v2/auth/businesses]
+
+### Create a New Business [POST]
+You may create your own business using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        {
+            "business_name": "Fuego Entertainment",
+            "description": "Record Label",
+            "location": "Meru",
+            "category": "Music"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "business_data": {
+                    "business_id": 1,
+                    "business_name": "Fuego Entertainment",
+                    "category": "Music",
+                    "description": "Record Label",
+                    "location": "Meru"
+                    "owner": "timmutai@email.com"
+                "msg": "Business created successfully.",
+            }
+
+### Retrive all Businesses [GET]
+You may view all your business using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "all_businesses": [
                     {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
+                        "business_id": 1,
+                        "business_name": "Fuego Entertainment",
+                        "category ": "Music",
+                        "description": "Record Label",
+                        "location ": "Meru",
+                        "owner": "timmutai@email.com"
+                    }
+                ]
+            }
+
+
+## Retrive, Update and Delete Businesses [/api/v2/auth/businesses/{business_id}]
+
++ Parameters
+    + business_id (number) - ID of the Business in the form of an integer
+
+### Update business by ID [PUT]
+
+You may update your own business using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        {
+            "business_name": "Hasta La Entertainment",
+            "description": "Record Label",
+            "location": "California",
+            "category": "Music"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "business_data": {
+                    "business_id": 1,
+                    "business_name": "Hasta La Entertainment",
+                    "category": "Music",
+                    "description": "Record Label",
+                    "location": "California"
+                    "owner": "timmutai@email.com"
+                "msg": "Business updated successfully.",
+            }
+### Retrive business by ID [GET]
+You may retrive one business by id using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
+
++ Response 200 (application/json)
+
+            {
+                "business_id": 1,
+                "business_name": "Fuego Entertainment",
+                "category ": "Music",
+                "description": "Record Label",
+                "location ": "Meru",
+                "owner": "timmutai@email.com"
+            }
+
+### Delete business item [DELETE]
+You may delete one business by id using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
+
++ Response 200 (application/json)
+
+            {
+                "msg": "The business has been deleted successfully."
+            }
+
+## Create and view Reviews [/api/v2/auth/businesses/{business_id}/reviews]
+
++ Parameters
+    + business_id (number) - ID of the Business in the form of an integer
+
+### Create a New Review [POST]
+You may create your own reviews about a particular business using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Request (application/json)
+
+        {
+            "review_name": "Fuegooo Music",
+            "body": "They have the best music services in the business"
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "msg": "Review added successfully."
+                "review_data": {
+                    "body": "They have the best music services in the business",
+                    "business_id": 1,
+                    "owner": "timmutai2@email.com",
+                    "review_id": 1,
+                    "review_name": "Fuegooo Music"
+            }
+
+### Retrive all Businesses [GET]
+You may view all your business using this action.
+This action takes a JSON payload as part of the request.
+Response then return specific header and body.
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "all_reviews": [
+                    {
+                        "body": "They have the best music services in the business",
+                        "business_id": 1,
+                        "owner": "timmutai2@email.com",
+                        "review_id": 1,
+                        "review_name": "Fuegooo Music"
                     }
                 ]
             }
