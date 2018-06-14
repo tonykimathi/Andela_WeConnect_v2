@@ -400,10 +400,10 @@ class UsersTestCase(unittest.TestCase):
             data3 = json.loads(reset_response3.data.decode())
             data4 = json.loads(reset_response4.data.decode())
 
-            self.assertEqual(data['message'], 'Please enter your email')
-            self.assertEqual(data2['message'], 'Please enter your old password.')
-            self.assertEqual(data3['message'], 'Please enter your new password.')
-            self.assertEqual(data4['message'], 'Please confirm your password.')
+            self.assertEqual(data['msg'], 'Please enter your email')
+            self.assertEqual(data2['msg'], 'Please enter your old password.')
+            self.assertEqual(data3['msg'], 'Please enter your new password.')
+            self.assertEqual(data4['msg'], 'Please confirm your password.')
 
             self.assertEqual(reset_response.status_code, 401)
             self.assertEqual(reset_response2.status_code, 401)
