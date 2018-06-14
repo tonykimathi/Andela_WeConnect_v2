@@ -44,7 +44,7 @@ def create_business(current_user):
             'category': created_business.category,
             'location': created_business.location,
             'user_id': created_business.user_id
-            }
+        }
 
     except KeyError:
         return jsonify({"message": "There is a missing field. Please check your inputs."}), 404
@@ -66,33 +66,26 @@ def update_business(current_user, business_id):
         category = data.get('category')
         user_id = current_user.id
 
-        try:
-            new_business = Business.query.filter_by(business_name=business_name).first()
+        current_business.business_name = business_name
+        current_business.description = description
+        current_business.location = location
+        current_business.category = category
+        current_business.user_id = user_id
 
-            if new_business:
-                return jsonify({'message': 'Business name already exists, enter a new one.'}), 202
+        db.session.add(current_business)
+        db.session.commit()
 
-            current_business.business_name = business_name
-            current_business.description = description
-            current_business.location = location
-            current_business.category = category
-            current_business.user_id = user_id
+        biz_data = {
+            'business_id': current_business.business_id,
+            'business_name': current_business.business_name,
+            'description': current_business.description,
+            'category': current_business.category,
+            'location': current_business.location,
+            'user_id': current_business.user_id
+        }
 
-            db.session.add(current_business)
-            db.session.commit()
-
-            biz_data = {
-                'business_id': current_business.business_id,
-                'business_name': current_business.business_name,
-                'description': current_business.description,
-                'category': current_business.category,
-                'location': current_business.location,
-                'user_id': current_business.user_id
-            }
-
-        except KeyError:
-            return jsonify({"message": "There was an error updating your business, please try again."}), 404
         return jsonify({'message': 'Business updated successfully', 'business_data': biz_data}), 200
+    return jsonify({'message': 'Business entered does not exist'}), 403
 
 
 @businesses_blueprint.route('/api/v2/auth/businesses', methods=['GET'])

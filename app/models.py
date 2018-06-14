@@ -13,7 +13,6 @@ class User(db.Model):
     __tablename__ = 'Users'
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    # user_id = db.Column(db.String(120), primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     username = db.Column(db.String(60), index=True, unique=True)
     password = db.Column(db.String(128))
@@ -23,7 +22,6 @@ class User(db.Model):
     reviews = db.relationship('Review', backref='user', lazy='dynamic')
 
     def __init__(self, email, username, password, admin=False):
-        # self.user_id = user_id
         self.email = email
         self.username = username
         self.password = password

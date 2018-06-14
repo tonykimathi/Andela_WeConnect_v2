@@ -22,16 +22,11 @@ def token_required(f):
             if not token:
                 return jsonify({'message': 'Token is missing!'}), 401
 
-            try:
-                data = User.decode_auth_token(token)
-                print(data)
-                if isinstance(data, int):
-                    current_user = User.query.filter_by(id=data).first()
-                else:
-                    return jsonify({'message': 'Invalid Token!'}), 401
-
-            except KeyError:
-                return jsonify({'message': 'Token is invalid!'}), 401
+            data = User.decode_auth_token(token)
+            if isinstance(data, int):
+                current_user = User.query.filter_by(id=data).first()
+            else:
+                return jsonify({'message': 'Invalid Token!'}), 401
 
             return f(current_user, *args, **kwargs)
 
@@ -66,13 +61,14 @@ def signup():
     person = User.query.filter_by(email=email).first()
 
     if person:
-        return jsonify({'message': 'Person already exists'}), 202
+        return jsonify({'message': 'User already exists.'}), 401
 
     created_user = User(email=data['email'], username=data['username'], password=hashed_password)
 
     user_data = {
         'email': created_user.email,
-        'username': created_user.username
+        'username': created_user.username,
+        'user_id': created_user.id
     }
 
     db.session.add(created_user)
@@ -152,8 +148,14 @@ def reset_password(current_user):
     new_password = data.get('new_password')
     confirm_password = data.get('confirm_password')
 
-    if not old_password:
+    if email is None:
+        return jsonify({'msg': 'Please enter your email'}), 401
+    if old_password is None:
         return jsonify({'msg': 'Please enter your old password.'}), 401
+    if new_password is None:
+        return jsonify({'msg': 'Please enter your new password.'}), 401
+    if confirm_password is None:
+        return jsonify({'msg': 'Please confirm your password.'}), 401
 
     if re.match("^[a-zA-Z0-9_]*$", new_password):
         return jsonify({"msg": "Your password should have at least 1 capital letter, special character and number."}), \
