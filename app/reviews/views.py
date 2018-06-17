@@ -9,7 +9,7 @@ reviews_blueprint = Blueprint('reviews', __name__)
 @reviews_blueprint.route('/api/v2/auth/businesses/<int:business_id>/reviews', methods=['POST'])
 @token_required
 def create_review(current_user, business_id):
-    if not current_user:
+    if current_user:
 
         if request.method == 'POST':
 
@@ -45,7 +45,7 @@ def create_review(current_user, business_id):
 @reviews_blueprint.route('/api/v2/auth/businesses/<int:business_id>/reviews', methods=['GET'])
 @token_required
 def get_all_reviews(current_user, business_id):
-    if not current_user:
+    if current_user:
 
         if request.method == 'GET':
             store = []

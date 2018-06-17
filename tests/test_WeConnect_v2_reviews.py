@@ -25,15 +25,13 @@ class BusinessTestCase(unittest.TestCase):
                          data=json.dumps(create_user),
                          content_type="application/json")
 
-        login_response = self.client.post("/api/v2/auth/login",
+        login_response2 = self.client.post("/api/v2/auth/login",
                                           data=json.dumps(create_user),
                                           content_type="application/json")
-
         create_business = {"business_name": "St. Pius The Tenth",
                            "description": "This is a school founded in 2015",
                            "category": "School",
-                           "location": "Meru",
-                           "user_id": 1
+                           "location": "Meru"
                            }
 
         self.client.post("/api/v2/auth/businesses",
@@ -41,7 +39,7 @@ class BusinessTestCase(unittest.TestCase):
                          content_type="application/json",
                          headers=dict(
                              Authorization='Bearer ' + json.loads(
-                                 login_response.data.decode()
+                                 login_response2.data.decode()
                              )['auth_token']
                          ))
         own_review = {"review_name": "School Review",
@@ -51,9 +49,9 @@ class BusinessTestCase(unittest.TestCase):
                                                data=json.dumps(own_review),
                                                content_type="application/json",
                                                headers=dict(
-                                                   Authorization='Bearer ' + json.loads(
-                                                       login_response.data.decode()
-                                                   )['auth_token']
+                                                   Authorization='Bearer ' +
+                                                                 json.loads(login_response2.data.decode())
+                                                                 ['auth_token']
                                                ))
         own_review_data = json.loads(own_review_response.data.decode())
         self.assertEqual(own_review_data['message'], "You cannot review a business you own.")
