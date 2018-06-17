@@ -44,6 +44,20 @@ class BusinessTestCase(unittest.TestCase):
                                  login_response.data.decode()
                              )['auth_token']
                          ))
+        own_review = {"review_name": "School Review",
+                      "body": "St. Pius is a very high performing school."
+                      }
+        own_review_response = self.client.post("/api/v2/auth/businesses/1/reviews",
+                                               data=json.dumps(own_review),
+                                               content_type="application/json",
+                                               headers=dict(
+                                                   Authorization='Bearer ' + json.loads(
+                                                       login_response.data.decode()
+                                                   )['auth_token']
+                                               ))
+        own_review_data = json.loads(own_review_response.data.decode())
+        self.assertEqual(own_review_data['message'], "You cannot review a business you own.")
+        self.assertEqual(own_review_response.status_code, 403)
 
         create_user = {"email": "tonyFee@email.com",
                        "username": "TonyFee",
@@ -75,21 +89,29 @@ class BusinessTestCase(unittest.TestCase):
                                                    login_response.data.decode()
                                                )['auth_token']
                                            ))
-        error_response = self.client.post("/api/v2/auth/businesses/1/reviews",
-                                          data=json.dumps(error_review),
-                                          content_type="application/json",
-                                          headers=dict(
+        no_business_review_response = self.client.post("/api/v2/auth/businesses/7/reviews",
+                                           data=json.dumps(create_review),
+                                           content_type="application/json",
+                                           headers=dict(
                                                Authorization='Bearer ' + json.loads(
                                                    login_response.data.decode()
                                                )['auth_token']
                                            ))
+        error_response = self.client.post("/api/v2/auth/businesses/1/reviews",
+                                          data=json.dumps(error_review),
+                                          content_type="application/json",
+                                          headers=dict(
+                                              Authorization='Bearer ' + json.loads(
+                                                  login_response.data.decode()
+                                              )['auth_token']
+                                          ))
         error_response2 = self.client.post("/api/v2/auth/businesses/1/reviews",
                                            data=json.dumps(error_review2),
                                            content_type="application/json",
                                            headers=dict(
-                                              Authorization='Bearer ' + json.loads(
-                                                  login_response.data.decode()
-                                              )['auth_token']
+                                               Authorization='Bearer ' + json.loads(
+                                                   login_response.data.decode()
+                                               )['auth_token']
                                            ))
         get_response = self.client.get("/api/v2/auth/businesses/1/reviews",
                                        content_type="application/json",
@@ -100,12 +122,16 @@ class BusinessTestCase(unittest.TestCase):
                                        ))
 
         data = json.loads(review_response.data.decode())
+        data0 = json.loads(no_business_review_response.data.decode())
         data1 = json.loads(get_response.data.decode())
         data2 = json.loads(error_response.data.decode())
         data3 = json.loads(error_response2.data.decode())
 
         self.assertEqual(data['message'], "Review created successfully")
         self.assertEqual(review_response.status_code, 201)
+
+        self.assertEqual(data0['message'], "That business does not exist")
+        self.assertEqual(no_business_review_response.status_code, 404)
 
         self.assertEqual(data1['message'], "These are your reviews.")
         self.assertEqual(get_response.status_code, 200)

@@ -29,6 +29,7 @@ def token_required(f):
                 return jsonify({'message': 'Invalid Token!'}), 401
 
             return f(current_user, *args, **kwargs)
+        return jsonify({'message': 'No token found!'}), 401
 
     return decorated
 
@@ -107,33 +108,22 @@ def login():
 @token_required
 def logout(current_user):
     """Logs out the user and adds token to blacklist"""
-    if not current_user:
-        return jsonify({'message': 'You cannot perform this function'})
+    if current_user:
 
-    auth_header = request.headers.get('Authorization')
+        auth_header = request.headers.get('Authorization')
 
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
 
-    if auth_token:
-        resp = User.decode_auth_token(auth_token)
-        if not isinstance(resp, str):
-            # mark the token as blacklisted
-            blacklist_token = BlacklistToken(token=auth_token)
-            try:
+            if auth_token:
+                # mark the token as blacklisted
+                blacklist_token = BlacklistToken(token=auth_token)
+
                 # insert the token
                 db.session.add(blacklist_token)
                 db.session.commit()
 
                 return jsonify({'message': 'Successfully logged out.'}), 200
-            except Exception as e:
-                return jsonify({'message': e}), 400
-        else:
-            return jsonify({'message': resp}), 401
-    else:
-        return jsonify({'message': 'Provide a valid auth token.'}), 403
 
 
 @users_blueprint.route('/api/v2/auth/reset-password', methods=['PUT'])
@@ -163,12 +153,12 @@ def reset_password(current_user):
 
     user = User.query.filter_by(email=email).first()
 
-    if user.password:
+    if user:
         if confirm_password == new_password:
             user.password = generate_password_hash(new_password, method='sha256')
             db.session.add(user)
             db.session.commit()
 
             return jsonify({'message': 'Password successfully reset.'}), 200
-        return jsonify({'message': 'Passwords do not match.', 'password': user.password}), 401
+        return jsonify({'message': 'Passwords do not match.'}), 401
     return jsonify({'message': 'User not found.'}), 400
