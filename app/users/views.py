@@ -129,36 +129,35 @@ def logout(current_user):
 @users_blueprint.route('/api/v2/auth/reset-password', methods=['PUT'])
 @token_required
 def reset_password(current_user):
-    if not current_user:
-        return jsonify({'message': 'You cannot perform that function'})
+    if current_user:
 
-    data = request.get_json()
-    email = data.get('email')
-    old_password = data.get('old_password')
-    new_password = data.get('new_password')
-    confirm_password = data.get('confirm_password')
+        data = request.get_json()
+        email = data.get('email')
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
 
-    if email is None:
-        return jsonify({'msg': 'Please enter your email'}), 401
-    if old_password is None:
-        return jsonify({'msg': 'Please enter your old password.'}), 401
-    if new_password is None:
-        return jsonify({'msg': 'Please enter your new password.'}), 401
-    if confirm_password is None:
-        return jsonify({'msg': 'Please confirm your password.'}), 401
+        if email is None:
+            return jsonify({'msg': 'Please enter your email'}), 401
+        if old_password is None:
+            return jsonify({'msg': 'Please enter your old password.'}), 401
+        if new_password is None:
+            return jsonify({'msg': 'Please enter your new password.'}), 401
+        if confirm_password is None:
+            return jsonify({'msg': 'Please confirm your password.'}), 401
 
-    if re.match("^[a-zA-Z0-9_]*$", new_password):
-        return jsonify({"msg": "Your password should have at least 1 capital letter, special character and number."}), \
-               401
+        if re.match("^[a-zA-Z0-9_]*$", new_password):
+            return jsonify({"msg": "Your password should have at least 1 capital letter, "
+                                   "special character and number."}), 401
 
-    user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
 
-    if user:
-        if confirm_password == new_password:
-            user.password = generate_password_hash(new_password, method='sha256')
-            db.session.add(user)
-            db.session.commit()
+        if user:
+            if confirm_password == new_password:
+                user.password = generate_password_hash(new_password, method='sha256')
+                db.session.add(user)
+                db.session.commit()
 
-            return jsonify({'message': 'Password successfully reset.'}), 200
-        return jsonify({'message': 'Passwords do not match.'}), 401
-    return jsonify({'message': 'User not found.'}), 400
+                return jsonify({'message': 'Password successfully reset.'}), 200
+            return jsonify({'message': 'Passwords do not match.'}), 401
+        return jsonify({'message': 'User not found.'}), 400

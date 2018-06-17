@@ -1,5 +1,5 @@
 import unittest
-# import time
+import time
 import json
 from app import create_app
 from app.models import db, User, BlacklistToken
@@ -225,9 +225,7 @@ class UsersTestCase(unittest.TestCase):
                                     headers=dict(
                                         Authorization="Bearer " + json.loads(login_response.data.decode())['auth_token']
                                     ))
-        # print(json.loads(login_response.data.decode())['auth_token'])
         response_message = json.loads(response.data.decode())
-        # print(response_message)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_message['message'], 'Successfully logged out.')
 
@@ -243,7 +241,7 @@ class UsersTestCase(unittest.TestCase):
         login_response = self.client.post("/api/v2/auth/login",
                                           data=json.dumps(create_user),
                                           content_type="application/json")
-        # time.sleep(660)
+        time.sleep(150)
         response = self.client.post("/api/v2/auth/logout",
                                     content_type="application/json",
                                     headers=dict(
@@ -255,15 +253,21 @@ class UsersTestCase(unittest.TestCase):
                                      headers=dict(
                                          Authorization="Bearer "
                                      ))
+        response3 = self.client.post("/api/v2/auth/logout",
+                                     content_type="application/json"
+                                     )
 
-        # self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response2.status_code, 401)
+        self.assertEqual(response3.status_code, 401)
 
-        # response_message = json.loads(response.data.decode("utf-8"))
+        response_message = json.loads(response.data.decode("utf-8"))
         response_message2 = json.loads(response2.data.decode("utf-8"))
+        response_message3 = json.loads(response3.data.decode("utf-8"))
 
-        # self.assertEqual(response_message['message'], 'Invalid Token!')
+        self.assertEqual(response_message['message'], 'Invalid Token!')
         self.assertEqual(response_message2['message'], 'Token is missing!')
+        self.assertEqual(response_message3['message'], 'No token found!')
 
     def test_valid_blacklisted_token_logout(self):
         """ Test for logout after a valid token gets blacklisted  """
