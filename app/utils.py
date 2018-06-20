@@ -1,5 +1,7 @@
 import re
-from flask import jsonify
+from flask import jsonify, request
+from app.models import Business
+from sqlalchemy import func
 
 
 def check_missing_registration_inputs(email, username, password):
@@ -56,3 +58,14 @@ def check_missing_review_registration_inputs(review_name, body):
         return jsonify({"message": "Please input a review name."}), 401
     if body is None:
         return jsonify({"message": "Please input a review body."}), 401
+
+
+def filter_business():
+    category = request.args.get('category')
+    location = request.args.get('location')
+    businesses = Business.query
+    if category is not None and category.strip() != '':
+        businesses = businesses.filter(func.lower(Business.category).like('%' + func.lower(category) + '%'))
+
+    if location is not None and location.strip() != '':
+        businesses = businesses.filter(func.lower(Business.location).like('%' + func.lower(location) + '%'))

@@ -3,7 +3,7 @@ from sqlalchemy import func
 from app.users.views import token_required
 from app import db
 from app.models import Business
-from app.utils import check_missing_business_registration_inputs
+from app.utils import check_missing_business_registration_inputs, filter_business
 
 businesses_blueprint = Blueprint('businesses', __name__)
 
@@ -85,18 +85,14 @@ def view_all_business(current_user):
         page = request.args.get('page', 1, type=int)
         limit = request.args.get('limit', 2, type=int)
         search = request.args.get('q')
-        category = request.args.get('category')
-        location = request.args.get('location')
+
         businesses = Business.query
 
         if search is not None and search.strip() != '':
             businesses = businesses.filter(func.lower(Business.business_name).like('%' + func.lower(search) + '%'))
 
-        if category is not None and category.strip() != '':
-            businesses = businesses.filter(func.lower(Business.category).like('%' + func.lower(category) + '%'))
-
-        if location is not None and location.strip() != '':
-            businesses = businesses.filter(func.lower(Business.location).like('%' + func.lower(location) + '%'))
+        if filter_business():
+            return filter_business()
 
         paginated_businesses = businesses.paginate(page, limit, False)
         result = []
