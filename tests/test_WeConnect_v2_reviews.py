@@ -136,8 +136,5 @@ class BusinessTestCase(unittest.TestCase):
 
         self.assertEqual(data2['message'], "Please input a review name.")
         self.assertEqual(data3['message'], "Please input a review body.")
-        self.assertEqual(error_response.status_code, 400)
-        self.assertEqual(error_response2.status_code, 400)
-
-    # def test_get_all_reviews(self):
-
+        self.assertEqual(error_response.status_code, 401)
+        self.assertEqual(error_response2.status_code, 401)

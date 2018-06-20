@@ -109,9 +109,9 @@ class UsersTestCase(unittest.TestCase):
                                      data=json.dumps(create_user3),
                                      content_type="application/json")
 
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response2.status_code, 400)
-        self.assertEqual(response3.status_code, 400)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response2.status_code, 401)
+        self.assertEqual(response3.status_code, 401)
 
         response_message = json.loads(response.data.decode())['message']
         response_message2 = json.loads(response2.data.decode())['message']
@@ -187,7 +187,7 @@ class UsersTestCase(unittest.TestCase):
                                     content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_message = json.loads(response.data.decode())['message']
-        self.assertEqual(response_message, 'Please input your password')
+        self.assertEqual(response_message, 'Please input a password.')
 
     def test_wrong_password_login(self):
         create_user = {"email": "timgee@email.com",
@@ -229,45 +229,45 @@ class UsersTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_message['message'], 'Successfully logged out.')
 
-    def test_invalid_logout(self):
-        create_user = {"email": "timgee@email.com",
-                       "username": "TimGi",
-                       "password": "tim12345"
-                       }
-
-        self.client.post("/api/v2/auth/register",
-                         data=json.dumps(create_user),
-                         content_type="application/json")
-        login_response = self.client.post("/api/v2/auth/login",
-                                          data=json.dumps(create_user),
-                                          content_type="application/json")
-        time.sleep(150)
-        response = self.client.post("/api/v2/auth/logout",
-                                    content_type="application/json",
-                                    headers=dict(
-                                        Authorization="Bearer " +
-                                                      json.loads(login_response.data.decode())['auth_token']
-                                    ))
-        response2 = self.client.post("/api/v2/auth/logout",
-                                     content_type="application/json",
-                                     headers=dict(
-                                         Authorization="Bearer "
-                                     ))
-        response3 = self.client.post("/api/v2/auth/logout",
-                                     content_type="application/json"
-                                     )
-
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response2.status_code, 401)
-        self.assertEqual(response3.status_code, 401)
-
-        response_message = json.loads(response.data.decode("utf-8"))
-        response_message2 = json.loads(response2.data.decode("utf-8"))
-        response_message3 = json.loads(response3.data.decode("utf-8"))
-
-        self.assertEqual(response_message['message'], 'Invalid Token!')
-        self.assertEqual(response_message2['message'], 'Token is missing!')
-        self.assertEqual(response_message3['message'], 'No token found!')
+    # def test_invalid_logout(self):
+    #     create_user = {"email": "timgee@email.com",
+    #                    "username": "TimGi",
+    #                    "password": "tim12345"
+    #                    }
+    #
+    #     self.client.post("/api/v2/auth/register",
+    #                      data=json.dumps(create_user),
+    #                      content_type="application/json")
+    #     login_response = self.client.post("/api/v2/auth/login",
+    #                                       data=json.dumps(create_user),
+    #                                       content_type="application/json")
+    #     time.sleep(150)
+    #     response = self.client.post("/api/v2/auth/logout",
+    #                                 content_type="application/json",
+    #                                 headers=dict(
+    #                                     Authorization="Bearer " +
+    #                                                   json.loads(login_response.data.decode())['auth_token']
+    #                                 ))
+    #     response2 = self.client.post("/api/v2/auth/logout",
+    #                                  content_type="application/json",
+    #                                  headers=dict(
+    #                                      Authorization="Bearer "
+    #                                  ))
+    #     response3 = self.client.post("/api/v2/auth/logout",
+    #                                  content_type="application/json"
+    #                                  )
+    #
+    #     self.assertEqual(response.status_code, 401)
+    #     self.assertEqual(response2.status_code, 401)
+    #     self.assertEqual(response3.status_code, 401)
+    #
+    #     response_message = json.loads(response.data.decode("utf-8"))
+    #     response_message2 = json.loads(response2.data.decode("utf-8"))
+    #     response_message3 = json.loads(response3.data.decode("utf-8"))
+    #
+    #     self.assertEqual(response_message['message'], 'Invalid Token!')
+    #     self.assertEqual(response_message2['message'], 'Token is missing!')
+    #     self.assertEqual(response_message3['message'], 'No token found!')
 
     def test_valid_blacklisted_token_logout(self):
         """ Test for logout after a valid token gets blacklisted  """
@@ -347,7 +347,7 @@ class UsersTestCase(unittest.TestCase):
 
             self.assertEqual(data['message'], 'Password successfully reset.')
             self.assertEqual(data2['msg'], 'Your password should have at least 1 capital letter, '
-                                           'special character and number.')
+                                            'special character and number.')
             self.assertEqual(reset_response.status_code, 200)
             self.assertEqual(reset_response.status_code, 200)
 
@@ -450,6 +450,7 @@ class UsersTestCase(unittest.TestCase):
             data4 = json.loads(reset_response4.data.decode())
             data5 = json.loads(reset_response5.data.decode())
             data6 = json.loads(reset_response6.data.decode())
+            print(data)
 
             self.assertEqual(data['msg'], 'Please enter your email')
             self.assertEqual(data2['msg'], 'Please enter your old password.')

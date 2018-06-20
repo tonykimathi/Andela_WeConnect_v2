@@ -121,13 +121,13 @@ class BusinessTestCase(unittest.TestCase):
         data4 = json.loads(business_response4.data.decode())
 
         self.assertEqual(data['message'], "Please input a business name.")
-        self.assertEqual(business_response.status_code, 400)
+        self.assertEqual(business_response.status_code, 401)
         self.assertEqual(data2['message'], "Please input a description.")
-        self.assertEqual(business_response.status_code, 400)
+        self.assertEqual(business_response.status_code, 401)
         self.assertEqual(data3['message'], "Please input a category.")
-        self.assertEqual(business_response.status_code, 400)
+        self.assertEqual(business_response.status_code, 401)
         self.assertEqual(data4['message'], "Please input a location.")
-        self.assertEqual(business_response.status_code, 400)
+        self.assertEqual(business_response.status_code, 401)
 
     def test_successful_business_update(self):
         create_user = {"email": "tomgeeF@email.com",
