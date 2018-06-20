@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.users.views import token_required
 from app import db
 from app.models import Review, Business
+from app.utils import check_missing_review_registration_inputs
 
 reviews_blueprint = Blueprint('reviews', __name__)
 
@@ -20,10 +21,8 @@ def create_review(current_user, business_id):
             body = data.get('body')
             user_id = current_user.id
 
-            if review_name is None:
-                return jsonify({"message": "Please input a review name."}), 400
-            if body is None:
-                return jsonify({"message": "Please input a review body."}), 400
+            if check_missing_review_registration_inputs(review_name, body):
+                return check_missing_review_registration_inputs(review_name, body)
 
             if not business:
                 return jsonify({'message': 'That business does not exist'}), 404

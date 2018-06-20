@@ -3,6 +3,7 @@ from sqlalchemy import func
 from app.users.views import token_required
 from app import db
 from app.models import Business
+from app.utils import check_missing_business_registration_inputs
 
 businesses_blueprint = Blueprint('businesses', __name__)
 
@@ -19,14 +20,8 @@ def create_business(current_user):
         category = data.get('category')
         user_id = current_user.id
 
-        if business_name is None:
-            return jsonify({"message": "Please input a business name."}), 400
-        if description is None:
-            return jsonify({"message": "Please input a description."}), 400
-        if location is None:
-            return jsonify({"message": "Please input a location."}), 400
-        if category is None:
-            return jsonify({"message": "Please input a category."}), 400
+        if check_missing_business_registration_inputs(business_name, description, location, category):
+            return check_missing_business_registration_inputs(business_name, description, location, category)
 
         business = Business.query.filter_by(business_name=business_name).first()
 
@@ -73,12 +68,9 @@ def update_business(current_user, business_id):
             db.session.commit()
 
             biz_data = {
-                'business_id': current_business.business_id,
-                'business_name': current_business.business_name,
-                'description': current_business.description,
-                'category': current_business.category,
-                'location': current_business.location,
-                'user_id': current_business.user_id
+                'business_id': current_business.business_id, 'business_name': current_business.business_name,
+                'description': current_business.description, 'category': current_business.category,
+                'location': current_business.location, 'user_id': current_business.user_id
             }
 
             return jsonify({'message': 'Business updated successfully', 'business_data': biz_data}), 200
@@ -95,24 +87,21 @@ def view_all_business(current_user):
         search = request.args.get('q')
         category = request.args.get('category')
         location = request.args.get('location')
-        all_businesses = Business.query
+        businesses = Business.query
 
         if search is not None and search.strip() != '':
-            all_businesses = all_businesses.filter(func.lower(
-                Business.business_name).like('%' + func.lower(search) + '%'))
+            businesses = businesses.filter(func.lower(Business.business_name).like('%' + func.lower(search) + '%'))
 
         if category is not None and category.strip() != '':
-            all_businesses = all_businesses.filter(func.lower(
-                Business.category).like('%' + func.lower(category) + '%'))
+            businesses = businesses.filter(func.lower(Business.category).like('%' + func.lower(category) + '%'))
 
         if location is not None and location.strip() != '':
-            all_businesses = all_businesses.filter(func.lower(
-                Business.location).like('%' + func.lower(location) + '%'))
+            businesses = businesses.filter(func.lower(Business.location).like('%' + func.lower(location) + '%'))
 
-        businesses = all_businesses.paginate(page, limit, False)
+        paginated_businesses = businesses.paginate(page, limit, False)
         result = []
 
-        for biz in businesses.items:
+        for biz in paginated_businesses.items:
             biz_data = {
                 'business_id': biz.business_id,
                 'business_name': biz.business_name,
