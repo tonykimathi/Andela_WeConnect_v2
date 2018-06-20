@@ -3,3 +3,4 @@ exclude_patterns:
 - "spec/"
 - "**/vendor/"
 - "migrations/"
+- "app/utils"
