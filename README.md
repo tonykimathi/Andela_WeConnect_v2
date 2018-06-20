@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/tonykimathi/Andela_WeConnect_v2.svg?branch=ft-get-all-user-reviews-157660976)](https://travis-ci.org/tonykimathi/Andela_WeConnect_v2)
 [![Coverage Status](https://coveralls.io/repos/github/tonykimathi/Andela_WeConnect_v2/badge.svg?branch=ft-get-all-user-reviews-157660976)](https://coveralls.io/github/tonykimathi/Andela_WeConnect_v2?branch=ft-get-all-user-reviews-157660976)
-
+[![Maintainability](https://api.codeclimate.com/v1/badges/09152b4976cf73cd0863/maintainability)](https://codeclimate.com/github/tonykimathi/Andela_WeConnect_v2/maintainability)
 # WeConnect
 
 This is an API for WeConnect, a platform that brings businesses and individuals together. This platform creates awareness for businesses and gives the users the ability to:
