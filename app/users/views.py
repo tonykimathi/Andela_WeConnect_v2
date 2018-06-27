@@ -88,12 +88,6 @@ def login():
     if check_missing_login_inputs(email, password):
         return check_missing_login_inputs(email, password)
 
-    # if email is None:
-    #     return jsonify({"message": "Please input an email address"}), 401
-    #
-    # if password is None:
-    #     return jsonify({"message": "Please input a password."}), 401
-
     user = User.query.filter_by(email=email).first()
 
     if not user:
