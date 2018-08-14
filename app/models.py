@@ -16,15 +16,17 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     username = db.Column(db.String(60), index=True, unique=True)
     password = db.Column(db.String(128))
+    confirm_password = db.Column(db.String(128))
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     businesses = db.relationship('Business', backref='user', lazy='dynamic')
     reviews = db.relationship('Review', backref='user', lazy='dynamic')
 
-    def __init__(self, email, username, password, admin=False):
+    def __init__(self, email, username, password, confirm_password, admin=False):
         self.email = email
         self.username = username
         self.password = password
+        self.confirm_password = confirm_password
         self.registered_on = datetime.datetime.now()
         self.admin = admin
 
@@ -37,7 +39,7 @@ class User(db.Model):
 
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=20),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
