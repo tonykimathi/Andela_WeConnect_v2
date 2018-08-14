@@ -42,7 +42,6 @@ def create_review(current_user, business_id):
 
 
 @reviews_blueprint.route('/api/v2/auth/businesses/<int:business_id>/reviews', methods=['GET'])
-@token_required
 def get_all_reviews(current_user, business_id):
     if current_user:
 

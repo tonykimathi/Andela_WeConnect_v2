@@ -50,11 +50,16 @@ def signup():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
+    confirm_password = data.get('confirm_password')
+
+    if password != confirm_password:
+        return jsonify({'message': 'Passwords do not match'}), 401
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
+    confirm_hashed_password = generate_password_hash(data['confirm_password'], method='sha256')
 
-    if check_missing_registration_inputs(email, username, password):
-        return check_missing_registration_inputs(email, username, password)
+    if check_missing_registration_inputs(email, username, password, confirm_password):
+        return check_missing_registration_inputs(email, username, password, confirm_password)
 
     if check_email(email):
         return check_email(email)
@@ -64,7 +69,8 @@ def signup():
     if person:
         return jsonify({'message': 'User already exists.'}), 401
 
-    created_user = User(email=data['email'], username=data['username'], password=hashed_password)
+    created_user = User(email=data['email'], username=data['username'], password=hashed_password,
+                        confirm_password=confirm_hashed_password)
 
     user_data = {
         'email': created_user.email,
@@ -98,7 +104,7 @@ def login():
 
         return jsonify({'auth_token': auth_token.decode(), 'message': 'User login successful'}), 200
 
-    return jsonify({'message': 'Wrong password entered'}), 401
+    return jsonify({'message': 'Wrong email/password entered'}), 401
 
 
 @users_blueprint.route('/api/v2/auth/logout', methods=['POST'])
@@ -125,32 +131,30 @@ def logout(current_user):
 
 @users_blueprint.route('/api/v2/auth/reset-password', methods=['PUT'])
 @token_required
-def reset_password(current_user):
-    if current_user:
+def reset_password():
 
-        data = request.get_json()
-        email = data.get('email')
-        old_password = data.get('old_password')
-        new_password = data.get('new_password')
-        confirm_password = data.get('confirm_password')
+    data = request.get_json()
+    email = data.get('email')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
 
-        if check_missing_change_password_inputs(email, old_password, new_password, confirm_password):
-            return check_missing_change_password_inputs(email, old_password, new_password, confirm_password)
+    if check_missing_change_password_inputs(email, new_password, confirm_password):
+        return check_missing_change_password_inputs(email, new_password, confirm_password)
 
-        if check_email(email):
-            return check_email(email)
+    if check_email(email):
+        return check_email(email)
 
-        if check_password(new_password):
-            return check_password(new_password)
+    if check_password(new_password):
+        return check_password(new_password)
 
-        user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
 
-        if user:
-            if confirm_password == new_password:
-                user.password = generate_password_hash(new_password, method='sha256')
-                db.session.add(user)
-                db.session.commit()
+    if user:
+        if confirm_password == new_password:
+            user.password = generate_password_hash(new_password, method='sha256')
+            db.session.add(user)
+            db.session.commit()
 
-                return jsonify({'message': 'Password successfully reset.'}), 200
-            return jsonify({'message': 'Passwords do not match.'}), 401
-        return jsonify({'message': 'User not found.'}), 400
+            return jsonify({'message': 'Password successfully reset.'}), 200
+        return jsonify({'message': 'Passwords do not match.'}), 401
+    return jsonify({'message': 'User not found.'}), 400
