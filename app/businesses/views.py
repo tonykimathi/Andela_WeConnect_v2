@@ -81,7 +81,7 @@ def update_business(current_user, business_id):
 def view_all_business():
 
     page = request.args.get('page', 1, type=int)
-    limit = request.args.get('limit', 4, type=int)
+    limit = request.args.get('limit', 6, type=int)
     search = request.args.get('q')
 
     businesses = Business.query
@@ -125,9 +125,11 @@ def view_single_business(business_id):
 
 @businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['DELETE'])
 @token_required
-def delete_single_business(business_id):
+def delete_single_business(current_user, business_id):
 
-    business = Business.query.filter_by(business_id=business_id).first()
-    db.session.delete(business)
-    db.session.commit()
-    return jsonify({'message': 'Business successfully deleted'}), 204
+    if current_user:
+
+        business = Business.query.filter_by(business_id=business_id).first()
+        db.session.delete(business)
+        db.session.commit()
+        return jsonify({'message': 'Business successfully deleted'}), 204

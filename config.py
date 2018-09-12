@@ -11,7 +11,7 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = "postgresql://timothy:timmutai@localhost:5432/andela_weconnect"
 
 
 class TestingConfig(BaseConfig):

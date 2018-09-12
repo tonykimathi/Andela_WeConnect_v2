@@ -53,9 +53,7 @@ def check_missing_business_registration_inputs(business_name, description, locat
         return jsonify({"message": "Please input a category."}), 401
 
 
-def check_missing_review_registration_inputs(review_name, body):
-    if review_name is None:
-        return jsonify({"message": "Please input a review name."}), 401
+def check_missing_review_registration_inputs(body):
     if body is None:
         return jsonify({"message": "Please input a review body."}), 401
 
