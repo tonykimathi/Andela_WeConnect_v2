@@ -4,13 +4,15 @@ from app.models import Business
 from sqlalchemy import func
 
 
-def check_missing_registration_inputs(email, username, password):
+def check_missing_registration_inputs(email, username, password, confirm_password):
     if email is None:
         return jsonify({"message": "Please input an email address"}), 401
     if username is None:
         return jsonify({"message": "Please input a username."}), 401
     if password is None:
         return jsonify({"message": "Please input a password."}), 401
+    if confirm_password is None:
+        return jsonify({"message": "Please confirm your password."}), 401
 
 
 def check_missing_login_inputs(email, password):
@@ -20,11 +22,9 @@ def check_missing_login_inputs(email, password):
         return jsonify({"message": "Please input a password."}), 401
 
 
-def check_missing_change_password_inputs(email, old_password, new_password, confirm_password):
+def check_missing_change_password_inputs(email, new_password, confirm_password):
     if email is None:
         return jsonify({"msg": "Please enter your email"}), 401
-    if old_password is None:
-        return jsonify({'msg': 'Please enter your old password.'}), 401
     if new_password is None:
         return jsonify({'msg': 'Please enter your new password.'}), 401
     if confirm_password is None:
@@ -53,9 +53,7 @@ def check_missing_business_registration_inputs(business_name, description, locat
         return jsonify({"message": "Please input a category."}), 401
 
 
-def check_missing_review_registration_inputs(review_name, body):
-    if review_name is None:
-        return jsonify({"message": "Please input a review name."}), 401
+def check_missing_review_registration_inputs(body):
     if body is None:
         return jsonify({"message": "Please input a review body."}), 401
 

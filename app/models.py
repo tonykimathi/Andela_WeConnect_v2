@@ -16,15 +16,17 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     username = db.Column(db.String(60), index=True, unique=True)
     password = db.Column(db.String(128))
+    confirm_password = db.Column(db.String(128))
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     businesses = db.relationship('Business', backref='user', lazy='dynamic')
     reviews = db.relationship('Review', backref='user', lazy='dynamic')
 
-    def __init__(self, email, username, password, admin=False):
+    def __init__(self, email, username, password, confirm_password, admin=False):
         self.email = email
         self.username = username
         self.password = password
+        self.confirm_password = confirm_password
         self.registered_on = datetime.datetime.now()
         self.admin = admin
 
@@ -37,7 +39,7 @@ class User(db.Model):
 
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=2),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=20),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
@@ -118,13 +120,11 @@ class Review(db.Model):
     review_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     business_id = db.Column(db.Integer, db.ForeignKey('Businesses.business_id'))
-    review_name = db.Column(db.String(60), index=True)
     body = db.Column(db.String(128))
 
-    def __init__(self, user_id, review_name, body):
+    def __init__(self, user_id, body, business_id):
         self.user_id = user_id
-        # self.business_id = business_id
-        self.review_name = review_name
+        self.business_id = business_id
         self.body = body
 
     def __repr__(self):

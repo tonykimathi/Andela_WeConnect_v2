@@ -78,61 +78,58 @@ def update_business(current_user, business_id):
 
 
 @businesses_blueprint.route('/api/v2/auth/businesses', methods=['GET'])
-@token_required
-def view_all_business(current_user):
-    if current_user:
+def view_all_business():
 
-        page = request.args.get('page', 1, type=int)
-        limit = request.args.get('limit', 2, type=int)
-        search = request.args.get('q')
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 6, type=int)
+    search = request.args.get('q')
 
-        businesses = Business.query
+    businesses = Business.query
 
-        if search is not None and search.strip() != '':
-            businesses = businesses.filter(func.lower(Business.business_name).like('%' + func.lower(search) + '%'))
+    if search is not None and search.strip() != '':
+        businesses = businesses.filter(func.lower(Business.business_name).like('%' + func.lower(search) + '%'))
 
-        if filter_business():
-            return filter_business()
+    if filter_business():
+        return filter_business()
 
-        paginated_businesses = businesses.paginate(page, limit, False)
-        result = []
+    paginated_businesses = businesses.paginate(page, limit, False)
+    result = []
 
-        for biz in paginated_businesses.items:
-            biz_data = {
-                'business_id': biz.business_id,
-                'business_name': biz.business_name,
-                'description': biz.description,
-                'category': biz.category,
-                'location': biz.location,
-                'user_id': biz.user_id
-            }
-            result.append(biz_data)
-        return jsonify({'all_businesses': result}), 200
+    for biz in paginated_businesses.items:
+        biz_data = {
+            'business_id': biz.business_id,
+            'business_name': biz.business_name,
+            'description': biz.description,
+            'category': biz.category,
+            'location': biz.location,
+            'user_id': biz.user_id
+        }
+        result.append(biz_data)
+    return jsonify({'all_businesses': result}), 200
 
 
 @businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['GET'])
-@token_required
-def view_single_business(current_user, business_id):
-    if current_user:
+def view_single_business(business_id):
 
-        business = Business.query.filter_by(business_id=business_id).first()
-        biz_data = {
-            'business_id': business.business_id,
-            'business_name': business.business_name,
-            'description': business.description,
-            'category': business.category,
-            'location': business.location,
-            'user_id': current_user.id
-        }
-        return jsonify({'single_business': biz_data}), 200
+    business = Business.query.filter_by(business_id=business_id).first()
+    biz_data = {
+        'business_id': business.business_id,
+        'business_name': business.business_name,
+        'description': business.description,
+        'category': business.category,
+        'location': business.location,
+        'user_id': business.user_id
+    }
+    return jsonify({'single_business': biz_data}), 200
 
 
 @businesses_blueprint.route('/api/v2/auth/businesses/<business_id>', methods=['DELETE'])
 @token_required
 def delete_single_business(current_user, business_id):
+
     if current_user:
 
         business = Business.query.filter_by(business_id=business_id).first()
         db.session.delete(business)
         db.session.commit()
-        return jsonify({'message': 'Business successfully deleted'}), 200
+        return jsonify({'message': 'Business successfully deleted'}), 204
