@@ -122,9 +122,9 @@ class Review(db.Model):
     business_id = db.Column(db.Integer, db.ForeignKey('Businesses.business_id'))
     body = db.Column(db.String(128))
 
-    def __init__(self, user_id, body):
+    def __init__(self, user_id, body, business_id):
         self.user_id = user_id
-        # self.business_id = business_id
+        self.business_id = business_id
         self.body = body
 
     def __repr__(self):
